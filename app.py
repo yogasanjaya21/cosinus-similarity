@@ -10,14 +10,15 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 # Konfigurasi Halaman Utama Streamlit
 st.set_page_config(
-    page_title="Pengukuran Kemiripan dengan Cosinus",
+    page_title="Cosinus Similarity",
     page_icon="📐",
     layout="wide",
 )
 
 st.title("📐 Kalkulator Cosinus Similarity & Visualisasi Sudut Vektor")
 st.write(
-    "Aplikasi untuk menghitung tingkat kemiripan kalimat, sudut antar vektor, dan visualisasi grafik."
+    "Aplikasi web interaktif untuk menganalisis kemiripan kalimat/dokumen, "
+    "ekstraksi atribut (otomatis atau manual), perhitungan sudut derajat, serta matriks ketidakmiripan."
 )
 
 st.markdown("---")
@@ -33,74 +34,89 @@ for i in range(1, 6):
     text = st.text_area(
         f"Kalimat / Dokumen {i}:",
         key=f"sentence_{i}",
-        placeholder=f"Ketik atau paste isi postingan {i} di sini...",
+        placeholder=f"Ketik atau paste isi postingan/kalimat {i} di sini...",
         height=70,
     )
     if text.strip():
         sentences_input.append((f"Dokumen {i}", text.strip()))
 
-# Fitur Opsional: Penggabungan Kata Kunci Khusus
-st.caption("⚙️ **Pengaturan Atribut Khusus (Frasa):**")
-# Isian dibuat kosong ("") agar cocok untuk tema apapun
-custom_phrases = st.text_input(
-    "Frasa khusus yang ingin digabung jadi 1 atribut (opsional, pisahkan dengan koma):",
-    value="",
-    placeholder="Contoh: nasi goreng, es teh, sepak bola",
+st.markdown("---")
+
+# Section 2: Penentuan Atribut (Otomatis vs Kustom)
+st.subheader("2. Mode Penentuan Atribut (Kata Kunci)")
+
+mode_atribut = st.radio(
+    "Pilih bagaimana atribut/fitur kata kunci ditentukan:",
+    options=[
+        "🤖 Otomatis (Mengekstrak seluruh kata penting dari kalimat)",
+        "✍️ Manual / Sesuai Kehendak (Ditentukan sendiri kata kuncinya)",
+    ],
 )
+
+custom_keywords_input = ""
+if "Manual" in mode_atribut:
+    custom_keywords_input = st.text_input(
+        "Masukkan kata kunci yang diinginkan (pisahkan dengan koma):",
+        placeholder="Contoh: DPR, Pemerintah, PPPK, Paruh Waktu, Penuh Waktu, Anggaran, PNS, Guru",
+        help="Aplikasi hanya akan menghitung frekuensi berdasarkan kata-kata yang kamu ketik di sini.",
+    )
+
 # Tombol Proses
 process_btn = st.button("🚀 Proses Penghitungan & Buat Grafik", type="primary")
 
-# Section 2: Pemrosesan & Hasil
+# Section 3: Pemrosesan & Hasil
 if process_btn:
     if len(sentences_input) < 2:
         st.error("⚠️ Silakan masukkan minimal **2 kalimat** untuk dibandingkan!")
+    elif "Manual" in mode_atribut and not custom_keywords_input.strip():
+        st.error("⚠️ Kamu memilih Mode Manual. Silakan isi kata kuncinya terlebih dahulu!")
     else:
         labels = [item[0] for item in sentences_input]
         docs = [item[1] for item in sentences_input]
 
-        # Preprocessing: Normalisasi Frasa Khusus
-        phrase_list = [p.strip().lower() for p in custom_phrases.split(",") if p.strip()]
-        
-        processed_docs = []
-        for doc in docs:
-            doc_clean = doc.lower()
-            # Ganti spasi pada frasa khusus dengan underscore (misal: "paruh waktu" -> "paruh_waktu")
-            for phrase in phrase_list:
-                phrase_clean = phrase.lower()
-                replacement = phrase_clean.replace(" ", "_")
-                doc_clean = re.sub(r'\b' + re.escape(phrase_clean) + r'\b', replacement, doc_clean)
-            processed_docs.append(doc_clean)
+        # Preprocessing Sederhana: Lowercase & Hapus Tanda Baca
+        cleaned_docs = [re.sub(r'[^\w\s]', ' ', doc.lower()) for doc in docs]
 
-        # Daftar Stopwords Bahasa Indonesia untuk Diabaikan
-        stopwords_id = [
-            "dan", "di", "ke", "dari", "yang", "ini", "itu", "untuk", "pada", "dengan",
-            "adalah", "sebagai", "akan", "juga", "oleh", "atau", "secara", "bisa", "sudah",
-            "ada", "bahwa", "satu", "dapat", "tersebut", "ini", "itu", "karena", "maka",
-            "sangat", "lagi", "pun", "kita", "kami", "mereka", "ia", "dia", "saat", "mencapai"
-        ]
-
-        # 1. Ekstraksi Kata menjadi Atribut (Bag of Words)
-        vectorizer = CountVectorizer(stop_words=stopwords_id)
-        X = vectorizer.fit_transform(processed_docs).toarray()
-        
-        # Kembalikan nama fitur yang ada underscore menjadi spasi
-        raw_features = vectorizer.get_feature_names_out()
-        features = [f.replace("_", " ") for f in raw_features]
+        if "Manual" in mode_atribut:
+            # Mode Manual: Pakai atribut yang diketik user
+            features = [k.strip().lower() for k in custom_keywords_input.split(",") if k.strip()]
+            
+            # Matriks Frekuensi Manual
+            X_list = []
+            for doc in cleaned_docs:
+                row = []
+                for feat in features:
+                    # Cari kemunculan frasa/kata
+                    count = len(re.findall(r'\b' + re.escape(feat) + r'\b', doc))
+                    row.append(count)
+                X_list.append(row)
+            X = np.array(X_list)
+            
+        else:
+            # Mode Otomatis: Pakai CountVectorizer dengan Stopwords
+            stopwords_id = [
+                "dan", "di", "ke", "dari", "yang", "ini", "itu", "untuk", "pada", "dengan",
+                "adalah", "sebagai", "akan", "juga", "oleh", "atau", "secara", "bisa", "sudah",
+                "ada", "bahwa", "satu", "dapat", "tersebut", "karena", "maka", "sangat", "lagi",
+                "pun", "kita", "kami", "mereka", "ia", "dia", "saat", "mencapai"
+            ]
+            vectorizer = CountVectorizer(stop_words=stopwords_id)
+            X = vectorizer.fit_transform(cleaned_docs).toarray()
+            features = vectorizer.get_feature_names_out()
 
         st.markdown("---")
         st.header("📊 Hasil Penghitungan Lengkap")
 
-        # Display Matriks Frekuensi Kata
+        # Matriks Frekuensi Kata
         st.subheader("a. Matriks Frekuensi Kata (Atribut / Fitur)")
-        st.write(f"Total **{len(features)} atribut/kata kunci unik** berhasil diekstrak:")
+        st.write(f"Total **{len(features)} atribut** yang dievaluasi:")
         df_tf = pd.DataFrame(X, index=labels, columns=features)
         st.dataframe(df_tf, use_container_width=True)
 
-        # 2. Hitung Cosine Similarity & Derajat Sudut
+        # Hitung Cosine Similarity, Sudut, & Dissimilarity
         cos_sim_matrix = cosine_similarity(X)
         num_docs = len(docs)
 
-        # Hitung Matriks Sudut (° Derajat) & Dissimilarity
         angle_matrix = np.zeros((num_docs, num_docs))
         dissim_matrix = np.zeros((num_docs, num_docs))
 
@@ -147,9 +163,19 @@ if process_btn:
                         else "Sangat Berbeda"
                     ),
                 })
-        st.table(pd.DataFrame(rincian_data))
+        df_rincian = pd.DataFrame(rincian_data)
+        st.table(df_rincian)
 
-        # 3. Grafik Titik Koordinat & Vektor 2D
+        # Tombol Download Hasil ke CSV
+        csv_data = df_sim.to_csv().encode('utf-8')
+        st.download_button(
+            label="📥 Download Hasil Matriks Similarity (CSV)",
+            data=csv_data,
+            file_name="hasil_cosine_similarity.csv",
+            mime="text/csv",
+        )
+
+        # Visualisasi Vektor 2D
         st.subheader("f. Visualisasi Vektor & Titik Koordinat (2D Space)")
 
         if X.shape[1] > 2:
@@ -165,7 +191,6 @@ if process_btn:
             x_val = coords[i, 0]
             y_val = coords[i, 1]
 
-            # Gambar Garis Vektor dari Titik Pusat (0,0)
             fig.add_trace(
                 go.Scatter(
                     x=[0, x_val],
