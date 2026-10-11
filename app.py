@@ -24,7 +24,7 @@ st.write(
 st.markdown("---")
 
 # Section 1: Form Input Kalimat (1 sampai 5)
-st.subheader("1. Masukkan Kalimat / Postingan Media Sosial")
+st.subheader("1. Masukkan Kalimat)
 st.caption(
     "Isi minimal 2 kalimat untuk dibandingkan. Kalimat yang kosong akan diabaikan secara otomatis."
 )
@@ -34,7 +34,7 @@ for i in range(1, 6):
     text = st.text_area(
         f"Kalimat / Dokumen {i}:",
         key=f"sentence_{i}",
-        placeholder=f"Ketik atau paste isi postingan/kalimat {i} di sini...",
+        placeholder=f"Ketik kalimat {i} di sini...",
         height=70,
     )
     if text.strip():
@@ -43,7 +43,7 @@ for i in range(1, 6):
 st.markdown("---")
 
 # Section 2: Penentuan Atribut (Otomatis vs Kustom)
-st.subheader("2. Mode Penentuan Atribut (Kata Kunci)")
+st.subheader("2. Metode Penentuan Atribut (Kata Kunci)")
 
 mode_atribut = st.radio(
     "Pilih bagaimana atribut/fitur kata kunci ditentukan:",
@@ -57,7 +57,7 @@ custom_keywords_input = ""
 if "Manual" in mode_atribut:
     custom_keywords_input = st.text_input(
         "Masukkan kata kunci yang diinginkan (pisahkan dengan koma):",
-        placeholder="",
+        placeholder="ketikkan kata kunci disini...",
         help="Aplikasi hanya akan menghitung frekuensi berdasarkan kata-kata yang kamu ketik di sini.",
     )
 
@@ -78,7 +78,7 @@ if process_btn:
         cleaned_docs = [re.sub(r'[^\w\s]', ' ', doc.lower()) for doc in docs]
 
         if "Manual" in mode_atribut:
-            # Mode Manual: Pakai atribut yang diketik user
+            # Metode Manual: Pakai atribut yang diketik user
             features = [k.strip().lower() for k in custom_keywords_input.split(",") if k.strip()]
             
             # Matriks Frekuensi Manual
@@ -113,7 +113,7 @@ if process_btn:
         df_tf = pd.DataFrame(X, index=labels, columns=features)
         st.dataframe(df_tf, use_container_width=True)
 
-        # Hitung Cosine Similarity, Sudut, & Dissimilarity
+        # Hitung Cosinus Similarity, Sudut
         cos_sim_matrix = cosine_similarity(X)
         num_docs = len(docs)
 
