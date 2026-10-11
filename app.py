@@ -57,7 +57,7 @@ custom_keywords_input = ""
 if "Manual" in mode_atribut:
     custom_keywords_input = st.text_input(
         "Masukkan kata kunci yang diinginkan (pisahkan dengan koma):",
-        placeholder="Contoh: DPR, Pemerintah, PPPK, Paruh Waktu, Penuh Waktu, Anggaran, PNS, Guru",
+        placeholder="",
         help="Aplikasi hanya akan menghitung frekuensi berdasarkan kata-kata yang kamu ketik di sini.",
     )
 
