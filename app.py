@@ -41,11 +41,12 @@ for i in range(1, 6):
 
 # Fitur Opsional: Penggabungan Kata Kunci Khusus
 st.caption("⚙️ **Pengaturan Atribut Khusus (Frasa):**")
+# Isian dibuat kosong ("") agar cocok untuk tema apapun
 custom_phrases = st.text_input(
-    "Frasa khusus yang digabung jadi 1 atribut (pisahkan dengan koma):",
-    value="paruh waktu, penuh waktu, p3k, dpr ri, banggar dpr, pemerintah pusat",
+    "Frasa khusus yang ingin digabung jadi 1 atribut (opsional, pisahkan dengan koma):",
+    value="",
+    placeholder="Contoh: nasi goreng, es teh, sepak bola",
 )
-
 # Tombol Proses
 process_btn = st.button("🚀 Proses Penghitungan & Buat Grafik", type="primary")
 
