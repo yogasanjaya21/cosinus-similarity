@@ -15,7 +15,7 @@ st.set_page_config(
     layout="wide",
 )
 
-st.title("📐 Kalkulator Cosine Similarity & Visualisasi Sudut Vektor")
+st.title("📐 Kalkulator Cosinus Similarity & Visualisasi Sudut Vektor")
 st.write(
     "Aplikasi untuk menghitung tingkat kemiripan kalimat, sudut antar vektor, dan visualisasi grafik."
 )
