@@ -15,16 +15,15 @@ st.set_page_config(
     layout="wide",
 )
 
-st.title("📐 Kalkulator Cosinus Similarity & Visualisasi Sudut Vektor")
+st.title("📐 Pengukuran Kemiripan dengan Cosinus")
 st.write(
-    "Aplikasi web interaktif untuk menganalisis kemiripan kalimat/dokumen, "
-    "ekstraksi atribut (otomatis atau manual), perhitungan sudut derajat, serta matriks ketidakmiripan."
+    "Aplikasi web interaktif untuk menganalisis kemiripan kalimat/dokumen."
 )
 
 st.markdown("---")
 
 # Section 1: Form Input Kalimat (1 sampai 5)
-st.subheader("1. Masukkan Kalimat)
+st.subheader("1. Masukkan Kalimat")
 st.caption(
     "Isi minimal 2 kalimat untuk dibandingkan. Kalimat yang kosong akan diabaikan secara otomatis."
 )
@@ -43,7 +42,7 @@ for i in range(1, 6):
 st.markdown("---")
 
 # Section 2: Penentuan Atribut (Otomatis vs Kustom)
-st.subheader("2. Metode Penentuan Atribut (Kata Kunci)")
+st.subheader("2. Mode Penentuan Atribut (Kata Kunci)")
 
 mode_atribut = st.radio(
     "Pilih bagaimana atribut/fitur kata kunci ditentukan:",
@@ -57,8 +56,8 @@ custom_keywords_input = ""
 if "Manual" in mode_atribut:
     custom_keywords_input = st.text_input(
         "Masukkan kata kunci yang diinginkan (pisahkan dengan koma):",
-        placeholder="ketikkan kata kunci disini...",
-        help="Aplikasi hanya akan menghitung frekuensi berdasarkan kata-kata yang kamu ketik di sini.",
+        placeholder="Ketik kata kunci disini...",
+        help="Aplikasi hanya akan menghitung frekuensi berdasarkan kata-kata yang diketikkan di sini.",
     )
 
 # Tombol Proses
@@ -78,7 +77,7 @@ if process_btn:
         cleaned_docs = [re.sub(r'[^\w\s]', ' ', doc.lower()) for doc in docs]
 
         if "Manual" in mode_atribut:
-            # Metode Manual: Pakai atribut yang diketik user
+            # Mode Manual: Pakai atribut yang diketik user
             features = [k.strip().lower() for k in custom_keywords_input.split(",") if k.strip()]
             
             # Matriks Frekuensi Manual
@@ -86,14 +85,13 @@ if process_btn:
             for doc in cleaned_docs:
                 row = []
                 for feat in features:
-                    # Cari kemunculan frasa/kata
                     count = len(re.findall(r'\b' + re.escape(feat) + r'\b', doc))
                     row.append(count)
                 X_list.append(row)
             X = np.array(X_list)
             
         else:
-            # Mode Otomatis: Pakai CountVectorizer dengan Stopwords
+            # Mode Otomatis: Pakai CountVectorizer dengan Stopwords Bahasa Indonesia
             stopwords_id = [
                 "dan", "di", "ke", "dari", "yang", "ini", "itu", "untuk", "pada", "dengan",
                 "adalah", "sebagai", "akan", "juga", "oleh", "atau", "secara", "bisa", "sudah",
@@ -113,22 +111,19 @@ if process_btn:
         df_tf = pd.DataFrame(X, index=labels, columns=features)
         st.dataframe(df_tf, use_container_width=True)
 
-        # Hitung Cosinus Similarity, Sudut
+        # Hitung Cosine Similarity & Sudut Derajat
         cos_sim_matrix = cosine_similarity(X)
         num_docs = len(docs)
 
         angle_matrix = np.zeros((num_docs, num_docs))
-        dissim_matrix = np.zeros((num_docs, num_docs))
 
         for i in range(num_docs):
             for j in range(num_docs):
                 val = np.clip(cos_sim_matrix[i][j], -1.0, 1.0)
                 angle_matrix[i][j] = round(math.degrees(math.acos(val)), 2)
-                dissim_matrix[i][j] = round(1.0 - val, 4)
 
         df_sim = pd.DataFrame(np.round(cos_sim_matrix, 4), index=labels, columns=labels)
         df_angle = pd.DataFrame(angle_matrix, index=labels, columns=labels)
-        df_dissim = pd.DataFrame(dissim_matrix, index=labels, columns=labels)
 
         col1, col2 = st.columns(2)
         with col1:
@@ -138,23 +133,17 @@ if process_btn:
             st.subheader("c. Matriks Sudut Vektor (° Derajat)")
             st.dataframe(df_angle.style.highlight_min(axis=0), use_container_width=True)
 
-        st.subheader("d. Matriks Ketidakmiripan (Dissimilarity Matrix)")
-        st.caption("Nilai mendekati 0 menunjukkan dokumen semakin identik.")
-        st.dataframe(df_dissim, use_container_width=True)
-
         # Detail Per Pasangan
-        st.subheader("e. Rincian Kemiripan Antar Pasangan Dokumen")
+        st.subheader("d. Rincian Kemiripan & Sudut Antar Pasangan Dokumen")
         rincian_data = []
         for i in range(num_docs):
             for j in range(i + 1, num_docs):
                 sim_val = cos_sim_matrix[i][j]
                 deg_val = angle_matrix[i][j]
-                dissim_val = dissim_matrix[i][j]
                 rincian_data.append({
                     "Pasangan": f"{labels[i]} ↔ {labels[j]}",
                     "Cosine Similarity": f"{sim_val:.4f}",
                     "Sudut (° Derajat)": f"{deg_val}°",
-                    "Dissimilarity (1 - sim)": f"{dissim_val:.4f}",
                     "Status Kemiripan": (
                         "Sangat Mirip (Satu Topik)"
                         if sim_val > 0.7
@@ -169,14 +158,14 @@ if process_btn:
         # Tombol Download Hasil ke CSV
         csv_data = df_sim.to_csv().encode('utf-8')
         st.download_button(
-            label="📥 Download Hasil Matriks Similarity (CSV)",
+            label="📥 Download Hasil Matriks Cosine Similarity (CSV)",
             data=csv_data,
             file_name="hasil_cosine_similarity.csv",
             mime="text/csv",
         )
 
         # Visualisasi Vektor 2D
-        st.subheader("f. Visualisasi Vektor & Titik Koordinat (2D Space)")
+        st.subheader("e. Visualisasi Vektor & Titik Koordinat (2D Space)")
 
         if X.shape[1] > 2:
             pca = PCA(n_components=2)
