@@ -9,14 +9,14 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 # Konfigurasi Halaman Utama
 st.set_page_config(
-    page_title="Kalkulator Cosine Similarity",
+    page_title="Cosinus Similarity",
     page_icon="📐",
     layout="wide",
 )
 
 st.title("📐 Kalkulator Cosine Similarity & Derajat Sudut")
 st.write(
-    "Aplikasi untuk menghitung tingkat kemiripan kalimat, sudut antar vektor, dan visualisasi grafiknya."
+    "Aplikasi untuk menghitung tingkat kemiripan kalimat, sudut antar vektor, dan visualisasi grafik."
 )
 
 st.markdown("---")
