@@ -175,15 +175,6 @@ if process_btn:
         df_rincian = pd.DataFrame(rincian_data)
         st.table(df_rincian)
 
-        # Tombol Download Hasil ke CSV
-        csv_data = df_sim.to_csv().encode('utf-8')
-        st.download_button(
-            label="📥 Download Hasil Matriks Cosine Similarity (CSV)",
-            data=csv_data,
-            file_name="hasil_cosine_similarity.csv",
-            mime="text/csv",
-        )
-
         # Visualisasi Vektor 2D
         st.subheader("e. Visualisasi Vektor & Titik Koordinat")
 
