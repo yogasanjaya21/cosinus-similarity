@@ -105,7 +105,6 @@ if process_btn:
 
         # LANDASAN RUMUS MATHEMATIS
         with st.expander("ℹ️ **Lihat Rumus & Landasan Perhitungan Matematika**", expanded=True):
-            st.markdown("""         
             st.latex(r"sim(x, y) = \cos(\theta) = \frac{x \cdot y}{\|x\| \|y\|}")
             st.markdown("""
             **Langkah-Langkah Perhitungan:**
