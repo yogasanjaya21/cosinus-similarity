@@ -7,6 +7,7 @@ import streamlit as st
 from sklearn.decomposition import PCA
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from Sastrawi.StopWordRemover.StopWordRemoverFactory import StopWordRemoverFactory
 
 # Konfigurasi Halaman Utama Streamlit
 st.set_page_config(
@@ -91,34 +92,10 @@ if process_btn:
             X = np.array(X_list)
             
         else:
-            # Mode Otomatis: Pakai CountVectorizer dengan Stopwords Bahasa Indonesia
-            stopwords_id = [
-                # Kata Hubung (Konjungsi)
-                "dan", "atau", "serta", "sambil", "tetapi", "melainkan", "sedangkan", "namun", 
-                "sebab", "karena", "karenanya", "sehingga", "maka", "sampai", "hingga", "agar", 
-                "supaya", "jika", "jikalau", "kalau", "apabila", "bila", "asalkan", "meskipun", 
-                "walaupun", "biarpun", "kendati", "seakan", "seolah", "seperti", "sebagai", 
-                "sebagaimana", "bahkan", "bahkanpun", "maupun", "lalu", "kemudian", "bahwa", 
-                "sebelum", "sesudah", "setelah", "sewaktu", "ketika", "saat", "sementara", 
+            # Mode Otomatis: Menggunakan Stopwords Resmi Bahasa Indonesia dari Sastrawi
+            factory = StopWordRemoverFactory()
+            stopwords_id = factory.get_stop_words()
             
-                # Kata Depan (Preposisi)
-                "di", "ke", "dari", "pada", "dalam", "dengan", "oleh", "tentang", "mengenai", 
-                "terhadap", "bersama", "beserta", "tanpa", "bagi", "untuk", "guna", "demi", 
-                "antara", "melalui", "secara",
-            
-                # Kata Ganti (Pronomina)
-                "ini", "itu", "tersebut", "berikut", "demikian", "sini", "situ", "sana", 
-                "saya", "aku", "kami", "kita", "kamu", "engkau", "kalian", "dia", "ia", 
-                "mereka", "anda", "siapa", "apa", "mana", "yang",
-            
-                # Kata Keterangan, Tunjuk & Penegas
-                "ada", "adalah", "ialah", "merupakan", "yaitu", "yakni", "akan", "telah", 
-                "sudah", "sedang", "masih", "belum", "pernah", "bisa", "dapat", "boleh", 
-                "harus", "mesti", "perlu", "sangat", "amat", "paling", "terlalu", "agak", 
-                "kurang", "lebih", "pula", "pun", "juga", "saja", "lagi", "hanya", "cuma", 
-                "bahkan", "tentu", "memang", "pasti", "bukan", "tidak", "tanpa", "satu", 
-                "dua", "tiga", "banyak", "beberapa", "sebagian", "seluruh", "semua"
-            ]
             vectorizer = CountVectorizer(stop_words=stopwords_id)
             X = vectorizer.fit_transform(cleaned_docs).toarray()
             features = vectorizer.get_feature_names_out()
@@ -128,14 +105,24 @@ if process_btn:
 
         # LANDASAN RUMUS MATHEMATIS
         with st.expander("ℹ️ **Lihat Rumus & Landasan Perhitungan Matematika**", expanded=True):
+            st.markdown("""
+            > **Kemiripan Cosinus: Menavigasi Data Sparse**  
+            > Saat menganalisis teks, vektor data menjadi sangat panjang dan dipenuhi angka nol (*sparse*).  
+            > Jarak Euclidean kehilangan relevansinya. **Solusinya: Ukur sudut, bukan jarak.**[cite: 1]
+            """)
+            
             st.latex(r"sim(x, y) = \cos(\theta) = \frac{x \cdot y}{\|x\| \|y\|}")
+            st.latex(r"\text{Sudut Derajat } (\theta) = \arccos(\text{sim}(x, y)) \times \frac{180^\circ}{\pi}")
+            
             st.markdown("""
             **Langkah-Langkah Perhitungan:**
-            1. **Perkalian Titik ($x \cdot y$) :**
+            1. **Perkalian Titik ($x \cdot y$):**
                $$x \cdot y = (x_1 \cdot y_1) + (x_2 \cdot y_2) + \dots + (x_n \cdot y_n)$$
             2. **Panjang Vektor ($\|x\|$ dan $\|y\|$):**
-               $$\|x\| = \sqrt{x_1^2 + x_2^2 + \dots + x_n^2}$$
-               dan $$\|y\| = \sqrt{y_1^2 + y_2^2 + \dots + y_n^2}$$
+               $$\|x\| = \sqrt{x_1^2 + x_2^2 + \dots + x_n^2} \quad \text{dan} \quad \|y\| = \sqrt{y_1^2 + y_2^2 + \dots + y_n^2}$$
+            3. **Interpretasi Sudut ($\theta$):**
+               * **$\theta = 90^\circ$ (Orthogonal)** $\rightarrow$ Cosinus 0 = Tidak ada kemiripan kata sama sekali.[cite: 1]
+               * **$\theta \rightarrow 0^\circ$** $\rightarrow$ Cosinus mendekati 1 = Dokumen sangat mirip.[cite: 1]
             """)
 
         # Matriks Frekuensi Kata
@@ -188,7 +175,7 @@ if process_btn:
 
                 rincian_data.append({
                     "Pasangan": f"{labels[i]} ↔ {labels[j]}",
-                    "Cosinus Similarity": f"{sim_val:.4f}",
+                    "Cosine Similarity": f"{sim_val:.4f}",
                     "Sudut (° Derajat)": f"{deg_val}°",
                     "Status Kemiripan": status,
                 })
