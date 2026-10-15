@@ -188,7 +188,7 @@ if process_btn:
 
                 rincian_data.append({
                     "Pasangan": f"{labels[i]} ↔ {labels[j]}",
-                    "Cosine Similarity": f"{sim_val:.4f}",
+                    "Cosinus Similarity": f"{sim_val:.4f}",
                     "Sudut (° Derajat)": f"{deg_val}°",
                     "Status Kemiripan": status,
                 })
