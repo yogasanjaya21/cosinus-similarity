@@ -10,20 +10,21 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 # Konfigurasi Halaman Utama Streamlit
 st.set_page_config(
-    page_title="Cosinus Similarity",
+    page_title="Kalkulator Cosine Similarity & Visualisasi Sudut",
     page_icon="📐",
     layout="wide",
 )
 
-st.title("📐 Pengukuran Kemiripan dengan Cosinus")
+st.title("📐 Kalkulator Cosine Similarity & Visualisasi Sudut Vektor")
 st.write(
-    "Aplikasi web interaktif untuk menganalisis kemiripan kalimat/dokumen."
+    "Aplikasi web interaktif untuk menganalisis kemiripan kalimat/dokumen, "
+    "ekstraksi atribut (otomatis atau manual), perhitungan sudut derajat, serta grafik vektor 2D."
 )
 
 st.markdown("---")
 
 # Section 1: Form Input Kalimat (1 sampai 5)
-st.subheader("1. Masukkan Kalimat")
+st.subheader("1. Masukkan Kalimat / Postingan Media Sosial")
 st.caption(
     "Isi minimal 2 kalimat untuk dibandingkan. Kalimat yang kosong akan diabaikan secara otomatis."
 )
@@ -33,7 +34,7 @@ for i in range(1, 6):
     text = st.text_area(
         f"Kalimat / Dokumen {i}:",
         key=f"sentence_{i}",
-        placeholder=f"Ketik kalimat {i} di sini...",
+        placeholder=f"Ketik atau paste isi postingan/kalimat {i} di sini...",
         height=70,
     )
     if text.strip():
@@ -56,8 +57,8 @@ custom_keywords_input = ""
 if "Manual" in mode_atribut:
     custom_keywords_input = st.text_input(
         "Masukkan kata kunci yang diinginkan (pisahkan dengan koma):",
-        placeholder="Ketik kata kunci disini...",
-        help="Aplikasi hanya akan menghitung frekuensi berdasarkan kata-kata yang diketikkan di sini.",
+        placeholder="Contoh: DPR, Pemerintah, PPPK, Paruh Waktu, Penuh Waktu, Anggaran, PNS, Guru",
+        help="Aplikasi hanya akan menghitung frekuensi berdasarkan kata-kata yang kamu ketik di sini.",
     )
 
 # Tombol Proses
@@ -104,6 +105,17 @@ if process_btn:
 
         st.markdown("---")
         st.header("📊 Hasil Penghitungan Lengkap")
+
+        # LANDASAN RUMUS MATHEMATIS
+        with st.expander("ℹ️ **Lihat Rumus & Landasan Perhitungan Matematika**", expanded=True):
+            st.latex(r"\text{sim}(x, y) = \frac{x \cdot y}{\|x\| \|y\|} = \frac{\sum_{i=1}^{n} x_i y_i}{\sqrt{\sum_{i=1}^{n} x_i^2} \sqrt{\sum_{i=1}^{n} y_i^2}}")
+            st.latex(r"\text{Sudut Derajat } (\theta) = \arccos(\text{sim}(x, y)) \times \frac{180^\circ}{\pi}")
+            st.caption(
+                "- **$x \cdot y$**: Perkalian titik (*dot product*) antar vektor dokumen.\n"
+                "- **$\|x\|$ dan $\|y\|$**: Panjang vektor (*Euclidean Norm*) masing-masing dokumen.\n"
+                "- **Nilai Cosine Similarity ($0 \rightarrow 1$)**: Mendekati 1 artinya semakin mirip.\n"
+                "- **Sudut ($\theta$)**: Mendekati $0^\circ$ artinya vektor berhimpit/sangat mirip."
+            )
 
         # Matriks Frekuensi Kata
         st.subheader("a. Matriks Frekuensi Kata (Atribut / Fitur)")
