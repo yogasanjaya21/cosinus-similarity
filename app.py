@@ -165,35 +165,35 @@ if process_btn:
             st.subheader("c. Matriks Sudut Vektor (° Derajat)")
             st.dataframe(df_angle.style.highlight_min(axis=0), use_container_width=True)
 
-        # Detail Per Pasangan
-                st.subheader("d. Rincian Kemiripan & Sudut Antar Pasangan Dokumen")
-                rincian_data = []
-                for i in range(num_docs):
-                    for j in range(i + 1, num_docs):
-                        sim_val = cos_sim_matrix[i][j]
-                        deg_val = angle_matrix[i][j]
-                        
-                        # Pengkategorian Status Kemiripan
-                        if sim_val >= 0.8:
-                            status = "Sangat Mirip (Identik)"
-                        elif sim_val >= 0.6:
-                            status = "Mirip (Topik Dekat)"
-                        elif sim_val >= 0.4:
-                            status = "Cukup / Agak Mirip"
-                        elif sim_val >= 0.2:
-                            status = "Kurang Mirip"
-                        else:
-                            status = "Sangat Berbeda"
-        
-                        rincian_data.append({
-                            "Pasangan": f"{labels[i]} ↔ {labels[j]}",
-                            "Cosine Similarity": f"{sim_val:.4f}",
-                            "Sudut (° Derajat)": f"{deg_val}°",
-                            "Status Kemiripan": status,
-                        })
-        
-                df_rincian = pd.DataFrame(rincian_data)
-                st.table(df_rincian)
+        # Detail Per Pasangan (Perbaikan Indentasi di sini)
+        st.subheader("d. Rincian Kemiripan & Sudut Antar Pasangan Dokumen")
+        rincian_data = []
+        for i in range(num_docs):
+            for j in range(i + 1, num_docs):
+                sim_val = cos_sim_matrix[i][j]
+                deg_val = angle_matrix[i][j]
+                
+                # Pengkategorian Status Kemiripan
+                if sim_val >= 0.8:
+                    status = "Sangat Mirip (Identik)"
+                elif sim_val >= 0.6:
+                    status = "Mirip (Topik Dekat)"
+                elif sim_val >= 0.4:
+                    status = "Cukup / Agak Mirip"
+                elif sim_val >= 0.2:
+                    status = "Kurang Mirip"
+                else:
+                    status = "Sangat Berbeda"
+
+                rincian_data.append({
+                    "Pasangan": f"{labels[i]} ↔ {labels[j]}",
+                    "Cosine Similarity": f"{sim_val:.4f}",
+                    "Sudut (° Derajat)": f"{deg_val}°",
+                    "Status Kemiripan": status,
+                })
+
+        df_rincian = pd.DataFrame(rincian_data)
+        st.table(df_rincian)
 
         # Tombol Download Hasil ke CSV
         csv_data = df_sim.to_csv().encode('utf-8')
