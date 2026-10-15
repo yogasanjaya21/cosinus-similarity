@@ -130,12 +130,17 @@ if process_btn:
         with st.expander("ℹ️ **Lihat Rumus & Landasan Perhitungan Matematika**", expanded=True):
             st.latex(r"\text{sim}(x, y) = \frac{x \cdot y}{\|x\| \|y\|} = \frac{\sum_{i=1}^{n} x_i y_i}{\sqrt{\sum_{i=1}^{n} x_i^2} \sqrt{\sum_{i=1}^{n} y_i^2}}")
             st.latex(r"\text{Sudut Derajat } (\theta) = \arccos(\text{sim}(x, y)) \times \frac{180^\circ}{\pi}")
-            st.caption(
-                "- **$x \cdot y$**: Perkalian titik (*dot product*) antar vektor dokumen.\n"
-                "- **$\|x\|$ dan $\|y\|$**: Panjang vektor (*Euclidean Norm*) masing-masing dokumen.\n"
-                "- **Nilai Cosine Similarity ($0 \rightarrow 1$)**: Mendekati 1 artinya semakin mirip.\n"
-                "- **Sudut ($\theta$)**: Mendekati $0^\circ$ artinya vektor berhimpit/sangat mirip."
-            )
+            
+            st.markdown("""
+            **Langkah-Langkah Perhitungan:**
+            1. **Perkalian Titik (*Dot Product*) $x \cdot y$:**
+               $$x \cdot y = (x_1 \cdot y_1) + (x_2 \cdot y_2) + \dots + (x_n \cdot y_n)$$
+            2. **Panjang Vektor / Norm Euclidean ($\|x\|$ dan $\|y\|$):**
+               $$\|x\| = \sqrt{x_1^2 + x_2^2 + \dots + x_n^2}$$
+               $$\|y\| = \sqrt{y_1^2 + y_2^2 + \dots + y_n^2}$$
+            3. **Cosine Similarity ($\text{sim}$):** Hasil bagi antara perkalian titik dengan perkalian panjang kedua vektor ($0 \rightarrow 1$).
+            4. **Derajat Sudut ($\theta$):** Mengubah nilai cosine ke dalam satuan derajat. Mendekati $0^\circ$ artinya kedua dokumen semakin identik.
+            """)
 
         # Matriks Frekuensi Kata
         st.subheader("a. Matriks Frekuensi Kata (Atribut / Fitur)")
@@ -165,7 +170,7 @@ if process_btn:
             st.subheader("c. Matriks Sudut Vektor (° Derajat)")
             st.dataframe(df_angle.style.highlight_min(axis=0), use_container_width=True)
 
-        # Detail Per Pasangan (Perbaikan Indentasi di sini)
+        # Detail Per Pasangan
         st.subheader("d. Rincian Kemiripan & Sudut Antar Pasangan Dokumen")
         rincian_data = []
         for i in range(num_docs):
