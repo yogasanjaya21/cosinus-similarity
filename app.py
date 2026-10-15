@@ -133,13 +133,10 @@ if process_btn:
             
             st.markdown("""
             **Langkah-Langkah Perhitungan:**
-            1. **Perkalian Titik (*Dot Product*) $x \cdot y$:**
-               $$x \cdot y = (x_1 \cdot y_1) + (x_2 \cdot y_2) + \dots + (x_n \cdot y_n)$$
-            2. **Panjang Vektor / Norm Euclidean ($\|x\|$ dan $\|y\|$):**
+            1. $$x \cdot y = (x_1 \cdot y_1) + (x_2 \cdot y_2) + \dots + (x_n \cdot y_n)$$
+            2. **Panjang Vektor ($\|x\|$ dan $\|y\|$):**
                $$\|x\| = \sqrt{x_1^2 + x_2^2 + \dots + x_n^2}$$
-               $$\|y\| = \sqrt{y_1^2 + y_2^2 + \dots + y_n^2}$$
-            3. **Cosine Similarity ($\text{sim}$):** Hasil bagi antara perkalian titik dengan perkalian panjang kedua vektor ($0 \rightarrow 1$).
-            4. **Derajat Sudut ($\theta$):** Mengubah nilai cosine ke dalam satuan derajat. Mendekati $0^\circ$ artinya kedua dokumen semakin identik.
+               dan $$\|y\| = \sqrt{y_1^2 + y_2^2 + \dots + y_n^2}$$
             """)
 
         # Matriks Frekuensi Kata
