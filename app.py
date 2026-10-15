@@ -126,18 +126,26 @@ if process_btn:
         st.markdown("---")
         st.header("📊 Hasil Penghitungan Lengkap")
 
-        # LANDASAN RUMUS MATHEMATIS
+        # LANDASAN RUMUS MATHEMATIS (Disesuaikan dengan Slide Materi)
         with st.expander("ℹ️ **Lihat Rumus & Landasan Perhitungan Matematika**", expanded=True):
-            st.latex(r"\text{sim}(x, y) = \frac{x \cdot y}{\|x\| \|y\|} = \frac{\sum_{i=1}^{n} x_i y_i}{\sqrt{\sum_{i=1}^{n} x_i^2} \sqrt{\sum_{i=1}^{n} y_i^2}}")
+            st.markdown("""
+            > **Kemiripan Cosinus: Menavigasi Data Sparse**  
+            > Saat menganalisis teks, vektor data menjadi sangat panjang dan dipenuhi angka nol (*sparse*).  
+            > Jarak Euclidean kehilangan relevansinya. **Solusinya: Ukur sudut, bukan jarak.**
+            """)
+            
+            st.latex(r"sim(x, y) = \cos(\theta) = \frac{x \cdot y}{\|x\| \|y\|}")
             st.latex(r"\text{Sudut Derajat } (\theta) = \arccos(\text{sim}(x, y)) \times \frac{180^\circ}{\pi}")
             
             st.markdown("""
             **Langkah-Langkah Perhitungan:**
-            1. **Perkalian Titik ($x \cdot y$) :**
+            1. **Perkalian Titik ($x \cdot y$):**
                $$x \cdot y = (x_1 \cdot y_1) + (x_2 \cdot y_2) + \dots + (x_n \cdot y_n)$$
             2. **Panjang Vektor ($\|x\|$ dan $\|y\|$):**
-               $$\|x\| = \sqrt{x_1^2 + x_2^2 + \dots + x_n^2}$$
-               dan $$\|y\| = \sqrt{y_1^2 + y_2^2 + \dots + y_n^2}$$
+               $$\|x\| = \sqrt{x_1^2 + x_2^2 + \dots + x_n^2} \quad \text{dan} \quad \|y\| = \sqrt{y_1^2 + y_2^2 + \dots + y_n^2}$$
+            3. **Interpretasi Sudut ($\theta$):**
+               * **$\theta = 90^\circ$ (Orthogonal)** $\rightarrow$ Cosinus 0 = Tidak ada kemiripan kata sama sekali.
+               * **$\theta \rightarrow 0^\circ$** $\rightarrow$ Cosinus mendekati 1 = Dokumen sangat mirip.
             """)
 
         # Matriks Frekuensi Kata
