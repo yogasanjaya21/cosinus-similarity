@@ -10,21 +10,20 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 # Konfigurasi Halaman Utama Streamlit
 st.set_page_config(
-    page_title="Kalkulator Cosine Similarity & Visualisasi Sudut",
+    page_title="Cosinus Similarity",
     page_icon="📐",
     layout="wide",
 )
 
-st.title("📐 Kalkulator Cosine Similarity & Visualisasi Sudut Vektor")
+st.title("📐 Penghitungan  Kemiripan dengan Cosinus")
 st.write(
-    "Aplikasi web interaktif untuk menganalisis kemiripan kalimat/dokumen, "
-    "ekstraksi atribut (otomatis atau manual), perhitungan sudut derajat, serta grafik vektor 2D."
+    "Aplikasi web interaktif untuk menganalisis kemiripan kalimat/dokumen."
 )
 
 st.markdown("---")
 
 # Section 1: Form Input Kalimat (1 sampai 5)
-st.subheader("1. Masukkan Kalimat / Postingan Media Sosial")
+st.subheader("1. Masukkan Kalimat disini...")
 st.caption(
     "Isi minimal 2 kalimat untuk dibandingkan. Kalimat yang kosong akan diabaikan secara otomatis."
 )
