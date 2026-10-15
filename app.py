@@ -128,7 +128,7 @@ if process_btn:
 
         # LANDASAN RUMUS MATHEMATIS
         with st.expander("ℹ️ **Lihat Rumus & Landasan Perhitungan Matematika**", expanded=True):
-            st.latex(r"\text{sim}(x, y) = \frac{x \cdot y}{\|x\| \|y\|} = \frac{\sum_{i=1}^{n} x_i y_i}{\sqrt{\sum_{i=1}^{n} x_i^2} \sqrt{\sum_{i=1}^{n} y_i^2}}")
+            st.latex(r"sim(x, y) = \cos(\theta) = \frac{x \cdot y}{\|x\| \|y\|}")
             st.markdown("""
             **Langkah-Langkah Perhitungan:**
             1. **Perkalian Titik ($x \cdot y$) :**
