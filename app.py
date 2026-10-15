@@ -23,7 +23,7 @@ st.write(
 st.markdown("---")
 
 # Section 1: Form Input Kalimat (1 sampai 5)
-st.subheader("1. Masukkan Kalimat disini...")
+st.subheader("1. Masukkan Kalimat")
 st.caption(
     "Isi minimal 2 kalimat untuk dibandingkan. Kalimat yang kosong akan diabaikan secara otomatis."
 )
@@ -33,7 +33,7 @@ for i in range(1, 6):
     text = st.text_area(
         f"Kalimat / Dokumen {i}:",
         key=f"sentence_{i}",
-        placeholder=f"Ketik atau paste isi postingan/kalimat {i} di sini...",
+        placeholder=f"Ketik kalimat {i} di sini...",
         height=70,
     )
     if text.strip():
@@ -56,7 +56,7 @@ custom_keywords_input = ""
 if "Manual" in mode_atribut:
     custom_keywords_input = st.text_input(
         "Masukkan kata kunci yang diinginkan (pisahkan dengan koma):",
-        placeholder="Contoh: DPR, Pemerintah, PPPK, Paruh Waktu, Penuh Waktu, Anggaran, PNS, Guru",
+        placeholder="Ketik kata kunci disini...",
         help="Aplikasi hanya akan menghitung frekuensi berdasarkan kata-kata yang kamu ketik di sini.",
     )
 
@@ -93,10 +93,31 @@ if process_btn:
         else:
             # Mode Otomatis: Pakai CountVectorizer dengan Stopwords Bahasa Indonesia
             stopwords_id = [
-                "dan", "di", "ke", "dari", "yang", "ini", "itu", "untuk", "pada", "dengan",
-                "adalah", "sebagai", "akan", "juga", "oleh", "atau", "secara", "bisa", "sudah",
-                "ada", "bahwa", "satu", "dapat", "tersebut", "karena", "maka", "sangat", "lagi",
-                "pun", "kita", "kami", "mereka", "ia", "dia", "saat", "mencapai"
+                # Kata Hubung (Konjungsi)
+                "dan", "atau", "serta", "sambil", "tetapi", "melainkan", "sedangkan", "namun", 
+                "sebab", "karena", "karenanya", "sehingga", "maka", "sampai", "hingga", "agar", 
+                "supaya", "jika", "jikalau", "kalau", "apabila", "bila", "asalkan", "meskipun", 
+                "walaupun", "biarpun", "kendati", "seakan", "seolah", "seperti", "sebagai", 
+                "sebagaimana", "bahkan", "bahkanpun", "maupun", "lalu", "kemudian", "bahwa", 
+                "sebelum", "sesudah", "setelah", "sewaktu", "ketika", "saat", "sementara", 
+            
+                # Kata Depan (Preposisi)
+                "di", "ke", "dari", "pada", "dalam", "dengan", "oleh", "tentang", "mengenai", 
+                "terhadap", "bersama", "beserta", "tanpa", "bagi", "untuk", "guna", "demi", 
+                "antara", "melalui", "secara",
+            
+                # Kata Ganti (Pronomina)
+                "ini", "itu", "tersebut", "berikut", "demikian", "sini", "situ", "sana", 
+                "saya", "aku", "kami", "kita", "kamu", "engkau", "kalian", "dia", "ia", 
+                "mereka", "anda", "siapa", "apa", "mana", "yang",
+            
+                # Kata Keterangan, Tunjuk & Penegas
+                "ada", "adalah", "ialah", "merupakan", "yaitu", "yakni", "akan", "telah", 
+                "sudah", "sedang", "masih", "belum", "pernah", "bisa", "dapat", "boleh", 
+                "harus", "mesti", "perlu", "sangat", "amat", "paling", "terlalu", "agak", 
+                "kurang", "lebih", "pula", "pun", "juga", "saja", "lagi", "hanya", "cuma", 
+                "bahkan", "tentu", "memang", "pasti", "bukan", "tidak", "tanpa", "satu", 
+                "dua", "tiga", "banyak", "beberapa", "sebagian", "seluruh", "semua"
             ]
             vectorizer = CountVectorizer(stop_words=stopwords_id)
             X = vectorizer.fit_transform(cleaned_docs).toarray()
@@ -138,7 +159,7 @@ if process_btn:
 
         col1, col2 = st.columns(2)
         with col1:
-            st.subheader("b. Matriks Cosine Similarity (0 - 1)")
+            st.subheader("b. Matriks Cosinus Similarity")
             st.dataframe(df_sim.style.highlight_max(axis=0), use_container_width=True)
         with col2:
             st.subheader("c. Matriks Sudut Vektor (° Derajat)")
